@@ -752,7 +752,7 @@ local megaSwitch = Killing:AddSwitch("NaN Size + Auto Equip + Punch + Egg (Combo
         safePlatform.Position = Vector3.new(posX, posY - 3, posZ)
         safePlatform.Anchored = true
         safePlatform.CanCollide = true
-        safePlatform.Color = Color3.fromRGB(255, 0, 0)
+        safePlatform.Color = Color3.fromRGB(27, 128, 100)
         safePlatform.Name = "SafePlatform"
         safePlatform.Parent = workspace
 
@@ -817,7 +817,7 @@ local megaSwitch = Killing:AddSwitch("NaN Size + Auto Equip + Punch + Egg (Combo
 end)
 
 local blacklistTextbox = Killing:AddTextBox("Blacklist", function(inputText)
-    local playerName = inputText:match("^%s*(.-)%s*$") -- Remove espaÃƒÂ§os no inÃƒÂ­cio/fim
+    local playerName = inputText:match("^%s*(.-)%s*$")
     if playerName ~= "" then
         for _, name in ipairs(_G.blacklistedPlayers) do
             if name:lower() == playerName:lower() then
@@ -952,7 +952,7 @@ local showKillsButton = Killing:AddButton("Show Kills UI", function()
             local killsFrame = Instance.new("Frame")
             killsFrame.Size = UDim2.new(0, 180, 0, 55)
             killsFrame.Position = UDim2.new(0.5, -90, 0, 60)
-            killsFrame.BackgroundColor3 = Color3.fromRGB(207, 13, 13)
+            killsFrame.BackgroundColor3 = Color3.fromRGB(27, 128, 100)
             killsFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
             killsFrame.Active = true
             killsFrame.Draggable = true
