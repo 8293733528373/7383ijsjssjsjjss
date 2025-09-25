@@ -1149,38 +1149,6 @@ local lblKills       = Specs:AddLabel("Kills: -")
 local lblEvilKarma   = Specs:AddLabel("Evil Karma: -")
 local lblGoodKarma   = Specs:AddLabel("Good Karma: -")
 local lblBrawls      = Specs:AddLabel("Brawls: -")
-local muscleKingTimeLabel = tabKill:AddLabel("Muscle King Time: -")
-muscleKingTimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-local function formatNumber(number)
-    if number == 0 then
-        return "0"
-    elseif number >= 1000000 then
-        return string.format("%.2fM", number / 1000000)
-    elseif number >= 1000 then
-        return string.format("%.2fK", number / 1000)
-    else
-        return tostring(math.floor(number))
-    end
-end
-
-local function updateMuscleKingTime()
-    if LocalPlayer:FindFirstChild("muscleKingTime") then
-        local timeValue = LocalPlayer.muscleKingTime.Value
-        
-        local formattedTime = formatNumber(timeValue)
-        muscleKingTimeLabel.Text = string.format("Muscle King Time: %s", formattedTime)
-    else
-        muscleKingTimeLabel.Text = "Muscle King Time: N/A"
-    end
-end
-
-task.spawn(function()
-    while true do
-        updateMuscleKingTime()
-        task.wait(1)
-    end
-end)
 
 Specs:AddLabel("-------------------------------------------")
 
