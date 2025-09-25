@@ -1784,6 +1784,7 @@ buyPetsAurasFolder:AddSwitch("Auto Open Aura", function(bool)
 end)
 
 local tabCal = window:AddTab("Calculator")
+
 tabCal:AddLabel("Calculations").TextSize = 30
 
 local function parseValue(s)
@@ -1806,27 +1807,54 @@ end
 local function formatValue(n)
     local absn = math.abs(n)
     local sign = n < 0 and "-" or ""
-    if absn >= 1e27 then
-        return string.format("%s%.2fOc", sign, absn / 1e27)
-    elseif absn >= 1e24 then
-        return string.format("%s%.2fSp", sign, absn / 1e24)
-    elseif absn >= 1e21 then
-        return string.format("%s%.2fSx", sign, absn / 1e21)
-    elseif absn >= 1e18 then
-        return string.format("%s%.2fQn", sign, absn / 1e18)
-    elseif absn >= 1e15 then
-        return string.format("%s%.2fQa", sign, absn / 1e15)
-    elseif absn >= 1e12 then
-        return string.format("%s%.2fT", sign, absn / 1e12)
-    elseif absn >= 1e9 then
-        return string.format("%s%.2fB", sign, absn / 1e9)
-    elseif absn >= 1e6 then
-        return string.format("%s%.2fM", sign, absn / 1e6)
-    elseif absn >= 1e3 then
-        return string.format("%s%.2fK", sign, absn / 1e3)
-    else
-        return string.format("%s%.2f", sign, absn)
+    
+    if absn == 0 then
+        return "0"
     end
+
+    if absn < 1000 then
+        if math.floor(absn) == absn then
+            return string.format("%s%d", sign, absn)
+        else
+            local formatted = string.format("%s%.2f", sign, absn)
+            if formatted:sub(-3) == ".00" then
+                return string.format("%s%d", sign, absn)
+            else
+                return formatted
+            end
+        end
+    end
+    
+    local suffixes = {
+        {value = 1e27, suffix = "Oc"},
+        {value = 1e24, suffix = "Sp"},
+        {value = 1e21, suffix = "Sx"},
+        {value = 1e18, suffix = "Qn"},
+        {value = 1e15, suffix = "Qa"},
+        {value = 1e12, suffix = "T"},
+        {value = 1e9, suffix = "B"},
+        {value = 1e6, suffix = "M"},
+        {value = 1e3, suffix = "K"}
+    }
+    
+    for i, data in ipairs(suffixes) do
+        if absn >= data.value then
+            local value = absn / data.value
+            -- Remove .00 se for inteiro
+            if math.floor(value) == value then
+                return string.format("%s%d%s", sign, value, data.suffix)
+            else
+                local formatted = string.format("%s%.2f%s", sign, value, data.suffix)
+                if formatted:sub(-5) == ".00" .. data.suffix then
+                    return string.format("%s%d%s", sign, value, data.suffix)
+                else
+                    return formatted
+                end
+            end
+        end
+    end
+    
+    return string.format("%s%.2f", sign, absn)
 end
 
 local PACKS_MAX = 8
