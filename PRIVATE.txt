@@ -1149,29 +1149,8 @@ local lblKills       = Specs:AddLabel("Kills: -")
 local lblEvilKarma   = Specs:AddLabel("Evil Karma: -")
 local lblGoodKarma   = Specs:AddLabel("Good Karma: -")
 local lblBrawls      = Specs:AddLabel("Brawls: -")
-
-Specs:AddLabel("-------------------------------------------")
-
-Specs:AddLabel("Advanced Stats").TextSize = 30
-
-local lblBaseDur     = Specs:AddLabel("Base Durability: -")
-local lblUltimate    = Specs:AddLabel("Ultimate Boost: -")
-local lblPetBoost    = Specs:AddLabel("Pet Boost: -")
-local lblTotalDur    = Specs:AddLabel("TOTAL DURABILITY: -")
-
-local muscleKingTimeLabel = Specs:AddLabel("Muscle King Time: N/A")
-muscleKingTimeLabel.TextSize = 20
+local muscleKingTimeLabel = tabKill:AddLabel("Muscle King Time: -")
 muscleKingTimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-local lblWithPets    = Specs:AddLabel("With Your Pets: -")
-local lblHits        = Specs:AddLabel("Hits to Kill: -")
-local lblTime        = Specs:AddLabel("Time to Kill: -")
-
-Specs:AddLabel("-------------------------------------------")
-
-Specs:AddButton("Print Own Stats", function()
-    print("Printing stats...")
-end)
 
 local function formatNumber(number)
     if number == 0 then
@@ -1188,12 +1167,39 @@ end
 local function updateMuscleKingTime()
     if LocalPlayer:FindFirstChild("muscleKingTime") then
         local timeValue = LocalPlayer.muscleKingTime.Value
+        
         local formattedTime = formatNumber(timeValue)
         muscleKingTimeLabel.Text = string.format("Muscle King Time: %s", formattedTime)
     else
         muscleKingTimeLabel.Text = "Muscle King Time: N/A"
     end
 end
+
+task.spawn(function()
+    while true do
+        updateMuscleKingTime()
+        task.wait(1)
+    end
+end)
+
+Specs:AddLabel("-------------------------------------------")
+
+Specs:AddLabel("Advanced Stats").TextSize = 30
+
+local lblBaseDur     = Specs:AddLabel("Base Durability: -")
+local lblUltimate    = Specs:AddLabel("Ultimate Boost: -")
+local lblPetBoost    = Specs:AddLabel("Pet Boost: -")
+local lblTotalDur    = Specs:AddLabel("TOTAL DURABILITY: -")
+local lblBaseDmg     = Specs:AddLabel("Your Base Damage: -")
+local lblWithPets    = Specs:AddLabel("With Your Pets: -")
+local lblHits        = Specs:AddLabel("Hits to Kill: -")
+local lblTime        = Specs:AddLabel("Time to Kill: -")
+
+Specs:AddLabel("-------------------------------------------")
+
+Specs:AddButton("Print Own Stats", function()
+    print("Printing stats...")
+end)
 
 spectating = false
 currentConnection = nil
@@ -1259,8 +1265,6 @@ local PETS_MAX = 8
 
 task.spawn(function()
     while task.wait(0.2) do
-        updateMuscleKingTime()
-        
         if SelectedPlayer and SelectedPlayer ~= "" then
             local plr = game.Players:FindFirstChild(SelectedPlayer)
             if plr then
@@ -1301,33 +1305,19 @@ task.spawn(function()
                 local petBoost = baseDur * ((PETS_BOOST_PER_PACK * petsEquipped) / 100)
                 local totalDur = baseDur + ultimateBoost
                 local withPets = totalDur + petBoost
-                
-                local localPlayer = game.Players.LocalPlayer
-                local localStrength = localPlayer:FindFirstChild("leaderstats") and localPlayer.leaderstats:FindFirstChild("Strength") and localPlayer.leaderstats.Strength.Value or 0
-                local localBaseDamage = localStrength * 0.00000000042
-                local localPetsBoost = localBaseDamage * ((PETS_BOOST_PER_PACK * PETS_MAX) / 100)
-                local localTotalDamage = localBaseDamage + localPetsBoost
+                local baseDmg = totalDur * 0.00000000042
 
                 lblBaseDur.Text  = "Base Durability: " .. AbbrevNumber(baseDur)
                 lblUltimate.Text = string.format("Ultimate Boost (Lv.5): %s (+%d%%)", AbbrevNumber(ultimateBoost), ULTIMATE_BOOST_PERCENT)
                 lblPetBoost.Text = string.format("Pet Boost (%d): %s (+%.3f%%)", petsEquipped, AbbrevNumber(petBoost), PETS_BOOST_PER_PACK * petsEquipped)
                 lblTotalDur.Text = "TOTAL DURABILITY: " .. AbbrevNumber(totalDur)
                 lblTotalDur.TextColor3 = Color3.fromRGB(0, 255, 255)
-                
+                lblBaseDmg.Text  = "Your Base Damage: " .. AbbrevNumber(baseDmg)
                 lblWithPets.Text = string.format("With Your Pets (%d): %s", petsEquipped, AbbrevNumber(withPets))
                 lblWithPets.TextColor3 = Color3.fromRGB(255, 0, 0)
 
-                if localTotalDamage > 0 and withPets > 0 then
-                    local hitsToKill = math.ceil(withPets / localTotalDamage)
-                    local timeToKill = hitsToKill / 1.3
-                    local minutes = math.floor(timeToKill / 60)
-                    local seconds = math.floor(timeToKill % 60)
-                    lblHits.Text = string.format("Hits to Kill: %s", FormatWithCommas(hitsToKill))
-                    lblTime.Text = string.format("Time to Kill: %dm %ds", minutes, seconds)
-                else
-                    lblHits.Text = "Hits to Kill: N/A"
-                    lblTime.Text = "Time to Kill: N/A"
-                end
+                lblHits.Text = "Hits to Kill: N/A"
+                lblTime.Text = "Time to Kill: N/A"
             end
         end
     end
