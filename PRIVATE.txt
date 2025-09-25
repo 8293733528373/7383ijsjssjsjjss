@@ -60,7 +60,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/82937
 
 local window = library:AddWindow("Sad v1.1 | Private", {
     main_color = Color3.fromRGB(27, 128, 100),
-    min_size = Vector2.new(600, 800),
+    min_size = Vector2.new(560, 765),
     can_resize = false,
 })
 
